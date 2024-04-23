@@ -1,0 +1,144 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyN6GkpPH/KRq8xA63aqhy89",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/TomoharuKurosu/macro_KurosuTomoharu/blob/main/%E7%94%BB%E5%83%8F%E5%88%86%E6%9E%90\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 3,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "oqgkSCvhIAXq",
+        "outputId": "8240d335-e218-431f-addf-70365ccdac4a"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount(\"/content/drive\", force_remount=True).\n",
+            "[Errno 2] No such file or directory: '/content/drive/My Drive/Google Colab'\n",
+            "/content\n"
+          ]
+        }
+      ],
+      "source": [
+        "#ドライブをマウントする\n",
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')\n",
+        "\n",
+        "#カレントディレクトリに移動\n",
+        "%cd \"/content/drive/My Drive/Google Colab\"\n",
+        "\n",
+        "import pandas as pd\n",
+        "#データの読み込み 後で変更\n",
+        "df = pd.read_csv(\"/content/drive/MyDrive/Bostonhousedata.csv\")"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "import cv2\n",
+        "import numpy as np\n",
+        "import glob as glob\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "#from keras.utils import np_utils\n",
+        "from keras.utils import to_categorical\n",
+        "\n",
+        "\n",
+        "#フォルダをクラス名にする\n",
+        "path = \"img/deep_learning\"\n",
+        "folders = os.listdir(path)\n",
+        "\n",
+        "#フォルダ名を抽出\n",
+        "classes = [f for f in folders if os.path.isdir(os.path.join(path, f))]\n",
+        "n_classes = len(classes)\n",
+        "\n",
+        "\n",
+        "#画像とラベルの格納\n",
+        "X = []\n",
+        "Y = []\n",
+        "\n",
+        "\n",
+        "#画像を読み込みリサイズする\n",
+        "for label,class_name in enumerate(classes):\n",
+        "  files = glob.glob(path + \"/\" +  class_name + \"/*.jpg\")\n",
+        "  for file in files:\n",
+        "    img = cv2.imread(file)\n",
+        "    img = cv2.resize(img,dsize=(224,224))\n",
+        "    X.append(img)\n",
+        "    Y.append(label)\n",
+        "\n",
+        "#精度を上げるために正規化\n",
+        "X = np.array(X)\n",
+        "X = X.astype('float32')\n",
+        "X /= 255.0\n",
+        "\n",
+        "#ラベルの変換\n",
+        "\n",
+        "Y = np.array(Y)\n",
+        "Y = np_utils.to_categorical(Y,n_classes)\n",
+        "Y[:5]\n",
+        "\n",
+        "#学習データとテストデータに分ける(テストデータ2割、学習データ8割)\n",
+        "X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.2)\n",
+        "#学習データ(8割)\n",
+        "print(X_train.shape)\n",
+        "#テストデータ(2割)\n",
+        "print(X_test.shape)\n",
+        "#学習データ(8割)\n",
+        "print(Y_train.shape)\n",
+        "#テストデータ(2割)\n",
+        "print(Y_test.shape)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 211
+        },
+        "id": "4oLr6MYVJ9iN",
+        "outputId": "3e276588-5688-4cb6-b9b4-6fae314dd809"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "FileNotFoundError",
+          "evalue": "[Errno 2] No such file or directory: 'img/deep_learning'",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mFileNotFoundError\u001b[0m                         Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-5-93868703fbc6>\u001b[0m in \u001b[0;36m<cell line: 12>\u001b[0;34m()\u001b[0m\n\u001b[1;32m     10\u001b[0m \u001b[0;31m#フォルダをクラス名にする\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     11\u001b[0m \u001b[0mpath\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m\"img/deep_learning\"\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---> 12\u001b[0;31m \u001b[0mfolders\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mos\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mlistdir\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mpath\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m     13\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     14\u001b[0m \u001b[0;31m#フォルダ名を抽出\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mFileNotFoundError\u001b[0m: [Errno 2] No such file or directory: 'img/deep_learning'"
+          ]
+        }
+      ]
+    }
+  ]
+}
